@@ -1,0 +1,31 @@
+5651e89a8000-5651e89d7000 r--p 00000000 103:02 262253                    /usr/bin/bash
+5651e89d7000-5651e8ab6000 r-xp 0002f000 103:02 262253                    /usr/bin/bash
+5651e8ab6000-5651e8af0000 r--p 0010e000 103:02 262253                    /usr/bin/bash
+5651e8af1000-5651e8af5000 r--p 00148000 103:02 262253                    /usr/bin/bash
+5651e8af5000-5651e8afe000 rw-p 0014c000 103:02 262253                    /usr/bin/bash
+5651e8afe000-5651e8b09000 rw-p 00000000 00:00 0 
+5651ea3c1000-5651ea54f000 rw-p 00000000 00:00 0                          [heap]
+7fb8ddd44000-7fb8de2b7000 r--p 00000000 103:02 268643                    /usr/lib/locale/locale-archive
+7fb8de2b7000-7fb8de2ba000 rw-p 00000000 00:00 0 
+7fb8de2ba000-7fb8de2e2000 r--p 00000000 103:02 269467                    /usr/lib/x86_64-linux-gnu/libc.so.6
+7fb8de2e2000-7fb8de477000 r-xp 00028000 103:02 269467                    /usr/lib/x86_64-linux-gnu/libc.so.6
+7fb8de477000-7fb8de4cf000 r--p 001bd000 103:02 269467                    /usr/lib/x86_64-linux-gnu/libc.so.6
+7fb8de4cf000-7fb8de4d3000 r--p 00214000 103:02 269467                    /usr/lib/x86_64-linux-gnu/libc.so.6
+7fb8de4d3000-7fb8de4d5000 rw-p 00218000 103:02 269467                    /usr/lib/x86_64-linux-gnu/libc.so.6
+7fb8de4d5000-7fb8de4e2000 rw-p 00000000 00:00 0 
+7fb8de4e2000-7fb8de4f0000 r--p 00000000 103:02 270687                    /usr/lib/x86_64-linux-gnu/libtinfo.so.6.3
+7fb8de4f0000-7fb8de501000 r-xp 0000e000 103:02 270687                    /usr/lib/x86_64-linux-gnu/libtinfo.so.6.3
+7fb8de501000-7fb8de50f000 r--p 0001f000 103:02 270687                    /usr/lib/x86_64-linux-gnu/libtinfo.so.6.3
+7fb8de50f000-7fb8de513000 r--p 0002c000 103:02 270687                    /usr/lib/x86_64-linux-gnu/libtinfo.so.6.3
+7fb8de513000-7fb8de514000 rw-p 00030000 103:02 270687                    /usr/lib/x86_64-linux-gnu/libtinfo.so.6.3
+7fb8de520000-7fb8de527000 r--s 00000000 103:02 1050055                   /usr/lib/x86_64-linux-gnu/gconv/gconv-modules.cache
+7fb8de527000-7fb8de529000 rw-p 00000000 00:00 0 
+7fb8de529000-7fb8de52b000 r--p 00000000 103:02 269076                    /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+7fb8de52b000-7fb8de555000 r-xp 00002000 103:02 269076                    /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+7fb8de555000-7fb8de560000 r--p 0002c000 103:02 269076                    /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+7fb8de561000-7fb8de563000 r--p 00037000 103:02 269076                    /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+7fb8de563000-7fb8de565000 rw-p 00039000 103:02 269076                    /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+7ffc05f44000-7ffc05f65000 rw-p 00000000 00:00 0                          [stack]
+7ffc05fc0000-7ffc05fc4000 r--p 00000000 00:00 0                          [vvar]
+7ffc05fc4000-7ffc05fc6000 r-xp 00000000 00:00 0                          [vdso]
+ffffffffff600000-ffffffffff601000 --xp 00000000 00:00 0                  [vsyscall]

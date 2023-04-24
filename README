@@ -1,0 +1,66 @@
+# Memory Map Visualizer
+
+Memory Map Visualizer is a Python script that allows users to visualize the memory layout of a process , providing a graphical representation of memory regions with different attributes such as readable, writable, executable, and private. It uses matplotlib to generate an interactive window displaying the memory map, with a color-coded legend and bottom bar to display detailed information about each memory region.
+
+## Requirements
+
+- Python 3.7 or higher
+- Matplotlib
+- Tkinter (for the interactive window)
+
+## Installation
+
+1. Clone this repository or download the source code.
+2. Install the required Python packages using pip:
+
+```sh
+pip install -r requirements.txt
+```
+
+## Usage
+
+To use the Memory Map Visualizer, you can either pass a file containing memory region information as an argument or provide the information via standard input (stdin).
+
+### Passing a File
+
+If you have a file containing memory region information, pass the file path as an argument when running the script:
+
+```sh
+python memory_map_visualizer.py /path/to/your/file
+```
+
+### Using Standard Input (stdin)
+
+If you don't have a file, you can provide the memory region information via standard input:
+
+```sh
+cat memory_regions.txt | python memory_map_visualizer.py
+```
+
+or
+
+```sh
+python memory_map_visualizer.py < memory_regions.txt
+```
+
+If no file path is provided and nothing is piped in, the script will read from stdin and wait for you to input the memory region information manually.
+
+## Memory Region Format
+
+The input file or stdin should contain memory region information in the following format:
+
+```
+start-end attributes offset device inode [file_name]
+```
+
+For example:
+
+```
+00400000-00401000 r-xp 00000000 08:01 1234 /path/to/file
+```
+
+## Interactive Window
+
+When the script is run, it will display an interactive window with the memory map visualization. The visualization includes color-coded memory regions and a legend on the left side. You can hover over a memory region to display detailed information about the region at bottom bar, including start, end, size, and attributes.
+
+The window can be resized, and the memory map will adjust accordingly.
