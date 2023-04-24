@@ -1,18 +1,23 @@
 import argparse
 import sys
 import math
+import platform
 import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 from matplotlib.ticker import NullFormatter
 
+IMAGE_WIDTH = 800
+IMAGE_HEIGHT = 1000
+LEGEND_WIDTH = 70
+COLUMN_NUM = 5
 
-IMAGE_WIDTH = 1500
-IMAGE_HEIGHT = 2000
-LEGEND_WIDTH = 150
-
-matplotlib.use('TkAgg')
-
+if platform.system() == 'Windows':
+    plt.switch_backend('Qt5Agg')
+elif platform.system() == 'Darwin':
+    plt.switch_backend('MacOSX')
+else:
+    plt.switch_backend('TkAgg')
 
 class MemoryAttributes:
     def __init__(self, readable, writable, executable, private, allocated):
@@ -26,7 +31,7 @@ class MemoryAttributes:
         if self.allocated is False:
             return "Free"
 
-        return f"{'r' if self.readable else '-'}{'w' if self.writable else '-'}{'x' if self.executable else '-'}{'p' if self.private else '-'}"
+        return f"{'r' if self.readable else '-'}{'w' if self.writable else '-'}{'x' if self.executable else '-'}"
 
     def to_color(self):
         if self.allocated is False:
@@ -114,8 +119,8 @@ def insert_gap_memory_regions(memory_regions):
     return regions_with_gaps
 
 
-def create_memory_map_figure(memory_regions, image_width, image_height):
-    fig, ax = plt.subplots(figsize=(image_width / 80, image_height / 80))
+def create_memory_map_figure(memory_regions, image_width, image_height, column_num):
+    fig, ax = plt.subplots(figsize=(image_width / 80, image_height / 80), dpi=80)
     ax.set_xlim(0, image_width)
     ax.set_ylim(0, image_height)
     ax.invert_yaxis()
@@ -124,38 +129,47 @@ def create_memory_map_figure(memory_regions, image_width, image_height):
 
     def format_custom_coord(x, y):
         # Find the memory region containing the current y-coordinate
-        current_height = 0
-        for region in memory_regions:
-            region_height = math.pow(math.log(region.size), 3)
-            region_height_in_pixels = (
-                region_height / total_img_height) * image_height
-            if current_height <= y < current_height + region_height_in_pixels:
+        label = ""
+        for bar in ax.patches:
+            if bar.get_y() <= y < bar.get_y() + bar.get_height() and \
+                bar.get_x() <= x < bar.get_x() + bar.get_width():
+                label = bar.get_label()  # Retrieve the region attribute from the bar
                 break
-            current_height += region_height_in_pixels
-        else:
-            return ""
 
         # Return the formatted region information
-        return region.to_str()
+        return label
+    
     ax.format_coord = format_custom_coord
 
     total_img_height = sum(math.pow(math.log(region.size), 3)
                            for region in memory_regions)
     current_y = 0
+    column = 0
 
-    rects = []
+    column_gap = 20
+    column_width = (image_width - LEGEND_WIDTH - (column_num - 1) * column_gap) / column_num
+
     for region in memory_regions:
         region_height = math.pow(math.log(region.size), 3)
         region_height_in_pixels = (
-            region_height / total_img_height) * image_height
+            region_height / total_img_height) * image_height * column_num
         region_color = region.attributes.to_color()
 
-        bar = patches.Rectangle((LEGEND_WIDTH, current_y), image_width - LEGEND_WIDTH,
-                                region_height_in_pixels, edgecolor=None, facecolor=region_color)
-        ax.add_patch(bar)
+        while region_height_in_pixels > 0:
+            x = LEGEND_WIDTH + column * (column_width + column_gap)
+            height = region_height_in_pixels
+            if current_y + height > image_height:
+                height = image_height - current_y
+            bar = patches.Rectangle((x, current_y),
+                                    column_width, height, edgecolor=None, facecolor=region_color)
+            bar.set_label(region.to_str())
+            ax.add_patch(bar)
 
-        rects.append((bar, region))
-        current_y += region_height_in_pixels
+            current_y += height
+            region_height_in_pixels -= height
+            if current_y >= image_height:
+                current_y = 0
+                column += 1
 
     draw_legend(ax, image_width, image_height)
     plt.tight_layout()
@@ -192,11 +206,17 @@ def main():
         description="Visualizes the memory layout of a process")
     parser.add_argument("file", nargs="?", type=argparse.FileType(
         "r"), default=sys.stdin, help="File containing memory map data")
+    parser.add_argument("--width", type=int, default=IMAGE_WIDTH,
+                        help="Image width in pixels")
+    parser.add_argument("--height", type=int, default=IMAGE_HEIGHT,
+                        help="Image height in pixels")
+    parser.add_argument("--column", type=int, default=COLUMN_NUM,
+                        help="Number of columns for memory regions")
     args = parser.parse_args()
 
     memory_regions = read_memory_regions(args.file)
     memory_regions = insert_gap_memory_regions(memory_regions)
-    create_memory_map_figure(memory_regions, IMAGE_WIDTH, IMAGE_HEIGHT)
+    create_memory_map_figure(memory_regions, args.width, args.height, args.column)
 
 
 if __name__ == "__main__":
