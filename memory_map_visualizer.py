@@ -4,7 +4,6 @@ import math
 import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
-import matplotlib.widgets as widgets
 from matplotlib.ticker import NullFormatter
 
 
@@ -14,6 +13,7 @@ LEGEND_WIDTH = 150
 
 matplotlib.use('TkAgg')
 
+
 class MemoryAttributes:
     def __init__(self, readable, writable, executable, private, allocated):
         self.readable = readable
@@ -21,23 +21,24 @@ class MemoryAttributes:
         self.executable = executable
         self.private = private
         self.allocated = allocated
-    
+
     def to_str(self):
         if self.allocated is False:
             return "Free"
-        
+
         return f"{'r' if self.readable else '-'}{'w' if self.writable else '-'}{'x' if self.executable else '-'}{'p' if self.private else '-'}"
 
     def to_color(self):
         if self.allocated is False:
             return (0, 0, 0)
-        
+
         r = 1 if self.readable else 0
         g = 1 if self.writable else 0
         b = 1 if self.executable else 0
 
         return (r, g, b) if (r, g, b) != (0, 0, 0) else (128 / 255, 128 / 255, 128 / 255)
-    
+
+
 class MemoryRegion:
     def __init__(self, start, end, size, attributes, file_name=None):
         self.start = start
@@ -45,9 +46,10 @@ class MemoryRegion:
         self.size = size
         self.attributes = attributes
         self.file_name = file_name
-    
+
     def to_str(self):
         return f"{self.start:#x}--{self.end:#x} ({self.size:#x}) {self.attributes.to_str()} {self.file_name})"
+
 
 def parse_memory_region(line):
     fields = line.split()
@@ -79,6 +81,7 @@ def parse_memory_region(line):
         file_name,
     )
 
+
 def read_memory_regions(file):
     memory_regions = []
 
@@ -89,6 +92,7 @@ def read_memory_regions(file):
 
     memory_regions.sort(key=lambda r: r.start)
     return memory_regions
+
 
 def insert_gap_memory_regions(memory_regions):
     regions_with_gaps = []
@@ -109,7 +113,8 @@ def insert_gap_memory_regions(memory_regions):
 
     return regions_with_gaps
 
-def create_memory_map_figure(memory_regions, image_width, image_height):    
+
+def create_memory_map_figure(memory_regions, image_width, image_height):
     fig, ax = plt.subplots(figsize=(image_width / 80, image_height / 80))
     ax.set_xlim(0, image_width)
     ax.set_ylim(0, image_height)
@@ -122,7 +127,8 @@ def create_memory_map_figure(memory_regions, image_width, image_height):
         current_height = 0
         for region in memory_regions:
             region_height = math.pow(math.log(region.size), 3)
-            region_height_in_pixels = (region_height / total_img_height) * image_height
+            region_height_in_pixels = (
+                region_height / total_img_height) * image_height
             if current_height <= y < current_height + region_height_in_pixels:
                 break
             current_height += region_height_in_pixels
@@ -132,17 +138,20 @@ def create_memory_map_figure(memory_regions, image_width, image_height):
         # Return the formatted region information
         return region.to_str()
     ax.format_coord = format_custom_coord
-    
-    total_img_height = sum(math.pow(math.log(region.size), 3) for region in memory_regions)
+
+    total_img_height = sum(math.pow(math.log(region.size), 3)
+                           for region in memory_regions)
     current_y = 0
 
     rects = []
     for region in memory_regions:
         region_height = math.pow(math.log(region.size), 3)
-        region_height_in_pixels = (region_height / total_img_height) * image_height
+        region_height_in_pixels = (
+            region_height / total_img_height) * image_height
         region_color = region.attributes.to_color()
 
-        bar = patches.Rectangle((LEGEND_WIDTH, current_y), image_width - LEGEND_WIDTH, region_height_in_pixels, edgecolor=None, facecolor=region_color)
+        bar = patches.Rectangle((LEGEND_WIDTH, current_y), image_width - LEGEND_WIDTH,
+                                region_height_in_pixels, edgecolor=None, facecolor=region_color)
         ax.add_patch(bar)
 
         rects.append((bar, region))
@@ -151,6 +160,7 @@ def create_memory_map_figure(memory_regions, image_width, image_height):
     draw_legend(ax, image_width, image_height)
     plt.tight_layout()
     plt.show()
+
 
 def draw_legend(ax, image_width, image_height):
     memory_types = [
@@ -169,19 +179,25 @@ def draw_legend(ax, image_width, image_height):
     legend_y = 5
 
     for this_type in memory_types:
-        legend_entry = patches.Rectangle((legend_x, legend_y), 10, 10, edgecolor=None, facecolor=this_type.to_color())
+        legend_entry = patches.Rectangle(
+            (legend_x, legend_y), 10, 10, edgecolor=None, facecolor=this_type.to_color())
         ax.add_patch(legend_entry)
-        ax.text(legend_x + 15, legend_y, this_type.to_str(), fontsize=10, verticalalignment='top')
+        ax.text(legend_x + 15, legend_y, this_type.to_str(),
+                fontsize=10, verticalalignment='top')
         legend_y += 20
 
+
 def main():
-    parser = argparse.ArgumentParser(description="Visualizes the memory layout of a process")
-    parser.add_argument("file", nargs="?", type=argparse.FileType("r"), default=sys.stdin, help="File containing memory map data")
+    parser = argparse.ArgumentParser(
+        description="Visualizes the memory layout of a process")
+    parser.add_argument("file", nargs="?", type=argparse.FileType(
+        "r"), default=sys.stdin, help="File containing memory map data")
     args = parser.parse_args()
 
     memory_regions = read_memory_regions(args.file)
     memory_regions = insert_gap_memory_regions(memory_regions)
     create_memory_map_figure(memory_regions, IMAGE_WIDTH, IMAGE_HEIGHT)
+
 
 if __name__ == "__main__":
     main()
